@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --color-sipbo-bg: #13151a;
+    --color-sipbo-panel: #1c1f26;
+    --color-sipbo-panel-light: #22262e;
+    --color-sipbo-border: #2d313a;
+    --color-sipbo-gold: #d4af37;
+    --color-sipbo-gold-light: #e8c961;
+    --color-sipbo-text: #e5e7eb;
+    --color-sipbo-text-muted: #9ca3af;
+    --color-sipbo-blue-accent: #3b82f6;
+
+    --font-sans: "Inter", ui-sans-serif, system-ui;
+
+    /* Warna mode terang */
+    --color-light-bg: #f4f5f7;
+    --color-light-panel: #ffffff;
+    --color-light-panel-light: #f0f2f5;
+    --color-light-sidebar: #f8f9fb;
+    --color-light-border: #e2e6ea;
+    --color-light-text: #1a1d23;
+    --color-light-text-muted: #6b7280;
+}
+
+/* ─── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #2d313a;
+    border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #d4af37;
+}
+.dark ::-webkit-scrollbar-thumb {
+    background: #c8ccd2;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #d4af37;
+}
+
+@layer base {
+    *,
+    *::before,
+    *::after {
+        transition-property: background-color, border-color, color, opacity;
+        transition-duration: 200ms;
+        transition-timing-function: ease;
+    }
+
+    /* ─── Tombol & link — tambahkan transform ───────── */
+    a,
+    button {
+        transition-property:
+            background-color, border-color, color, opacity, transform,
+            box-shadow;
+    }
+}
+
+/* ─── Hover lift untuk stat-card ────────────────── */
+.stat-card-hover {
+    transition:
+        transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 200ms ease;
+    will-change: transform;
+}
+
+/* Hanya aktif di device dgn mouse asli — hindari "sticky hover" di HP/tablet */
+@media (hover: hover) and (pointer: fine) {
+    .stat-card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px -12px rgba(212, 175, 55, 0.35);
+    }
+    .dark .stat-card-hover:hover {
+        box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* ─── Selection ─────────────────────────────────── */
+::selection {
+    background: rgba(212, 175, 55, 0.25);
+    color: inherit;
+}
+
+/* ─── Focus ring global ─────────────────────────── */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+    outline: 2px solid #d4af37;
+    outline-offset: 2px;
+}
+
+/* ─── Pagination override ───────────────────────── */
+/* Dark mode (default SIPBO) */
+nav[role="navigation"] span[aria-current="page"] > span,
+nav[role="navigation"] span[aria-current="page"] {
+    @apply bg-sipbo-gold text-sipbo-bg border-sipbo-gold font-semibold;
+}
+nav[role="navigation"] a,
+nav[role="navigation"] span:not([aria-current]) {
+    @apply bg-sipbo-panel border-sipbo-border text-sipbo-text-muted
+           hover:bg-sipbo-panel-light hover:text-sipbo-text hover:border-sipbo-gold/50
+           rounded-lg transition;
+}
+
+/* Light mode pagination */
+.dark nav[role="navigation"] a,
+.dark nav[role="navigation"] span:not([aria-current]) {
+    @apply bg-light-panel border-light-border text-light-text-muted
+           hover:bg-light-panel-light hover:text-light-text;
+}
+.dark nav[role="navigation"] span[aria-current="page"] > span,
+.dark nav[role="navigation"] span[aria-current="page"] {
+    @apply bg-sipbo-gold text-sipbo-bg border-sipbo-gold;
+}
+
+/* ─── Status badge helper ──────── */
+/* Default: panel gelap SIPBO (.dark TIDAK aktif) → badge transparan halus */
+.badge-menunggu {
+    @apply bg-amber-900/30 text-amber-400 border border-amber-700/50;
+}
+.badge-verif {
+    @apply bg-blue-900/30 text-blue-400 border border-blue-700/50;
+}
+.badge-setuju {
+    @apply bg-emerald-900/30 text-emerald-400 border border-emerald-700/50;
+}
+.badge-cair {
+    @apply bg-green-900/30 text-green-400 border border-green-700/50;
+}
+.badge-tolak {
+    @apply bg-red-900/30 text-red-400 border border-red-700/50;
+}
+.badge-draft {
+    @apply bg-sipbo-panel-light text-sipbo-text-muted border border-sipbo-border;
+}
+
+/* Panel putih (.dark aktif) → badge pastel solid, kontras tinggi */
+.dark .badge-menunggu {
+    @apply bg-amber-100 text-amber-700 border-amber-300;
+}
+.dark .badge-verif {
+    @apply bg-blue-100 text-blue-700 border-blue-300;
+}
+.dark .badge-setuju {
+    @apply bg-emerald-100 text-emerald-700 border-emerald-300;
+}
+.dark .badge-cair {
+    @apply bg-green-100 text-green-700 border-green-300;
+}
+.dark .badge-tolak {
+    @apply bg-red-100 text-red-700 border-red-300;
+}
+.dark .badge-draft {
+    @apply bg-gray-100 text-gray-600 border-gray-300;
+}
+
+/* ─── Flash message light-mode safe ─────────────── */
+.flash-success {
+    @apply bg-green-900/30 border border-green-700/50 text-green-400
+           dark:bg-green-100 dark:border-green-300 dark:text-green-700;
+}
+.flash-error {
+    @apply bg-red-900/30 border border-red-700/50 text-red-400
+           dark:bg-red-100 dark:border-red-300 dark:text-red-700;
+}
