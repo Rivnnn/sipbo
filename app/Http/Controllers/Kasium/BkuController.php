@@ -17,13 +17,10 @@ class BkuController extends Controller
     {
         $programs = ProgramAnggaran::where('tahun_anggaran', now()->year)->get();
         $programId = $request->input('program_id', $programs->first()?->id);
-
         $transaksi = BukuKasUmum::with(['inputBy', 'pengajuanAnggaran'])
             ->where('program_anggaran_id', $programId)
-            ->orderBy('tanggal_transaksi')
-            ->orderBy('id')
+            ->orderBy('tanggal_transaksi')->orderBy('id')
             ->paginate(15);
-
         $program = ProgramAnggaran::find($programId);
 
         return view('kasium.bku.index', compact('programs', 'programId', 'transaksi', 'program'));

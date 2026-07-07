@@ -111,12 +111,12 @@ Route::middleware(['auth'])->group(function () {
 
                     // CRUD Users
                     Route::middleware('permission:settings.users')->group(function () {
-                        Route::resource('users', UserController::class)->except('show');
+                        Route::resource('users', UserController::class)->except(['show', 'create', 'edit']);
                     });
 
                     // CRUD Units
                     Route::middleware('permission:settings.units')->group(function () {
-                        Route::resource('units', UnitKerjaController::class)->except('show');
+                        Route::resource('units', UnitKerjaController::class)->except(['show', 'create', 'edit']);
                     });
 
                     // Permission Manager

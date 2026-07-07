@@ -18,10 +18,11 @@ class PengajuanController extends Controller
     {
         $pengajuans = PengajuanAnggaran::with(['programAnggaran', 'unitKerja'])
             ->where('user_id', auth()->id())
-            ->latest()
-            ->paginate(10);
+            ->latest()->paginate(10);
 
-        return view('staf-unit.pengajuan.index', compact('pengajuans'));
+        $programs = ProgramAnggaran::where('tahun_anggaran', now()->year)->get(); // untuk modal
+
+        return view('staf-unit.pengajuan.index', compact('pengajuans', 'programs'));
     }
 
     public function create()

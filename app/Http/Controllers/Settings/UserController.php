@@ -10,10 +10,14 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    // Settings/UserController.php — index() pass $units & $roles untuk modal
     public function index()
     {
         $users = User::with(['unitKerja', 'roles'])->latest()->paginate(10);
-        return view('kasium.settings.users.index', compact('users'));
+        $units = UnitKerja::all();
+        $roles = ['staf_unit' => 'Staf Unit', 'kasium' => 'KASIUM', 'pimpinan' => 'Pimpinan'];
+
+        return view('kasium.settings.users.index', compact('users', 'units', 'roles'));
     }
 
     public function create()

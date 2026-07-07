@@ -1,15 +1,32 @@
 import "./bootstrap";
+import Alpine from "alpinejs";
 import { createIcons, icons } from "lucide";
 
-document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("theme-toggle");
-    if (!btn) return;
+// ─── Alpine ───────────────────────────────────────
+window.Alpine = Alpine;
+Alpine.start();
 
-    btn.addEventListener("click", () => {
-        const isDark = document.documentElement.classList.toggle("dark");
-        localStorage.setItem("theme", isDark ? "dark" : "light");
-        lucide.createIcons();
+// ─── Lucide ───────────────────────────────────────
+const initIcons = (scope) =>
+    createIcons({
+        icons,
+        nameAttr: "data-lucide",
+        nodes: scope ? [scope] : undefined,
     });
-});
 
-createIcons({ icons });
+document.addEventListener("DOMContentLoaded", () => initIcons());
+document.addEventListener("alpine:initialized", () => initIcons());
+document.addEventListener("alpine:navigated", () => initIcons());
+
+// ─── Modal helpers ────────────────────────────────
+window.openModal = (id) => {
+    window.dispatchEvent(new CustomEvent(`open-modal-${id}`));
+    // Re-init lucide hanya di dalam modal yang dibuka, bukan seluruh dokumen
+    requestAnimationFrame(() => {
+        const el = document.querySelector(`[data-modal-id="${id}"]`);
+        if (el) initIcons(el);
+    });
+};
+
+window.closeModal = (id) =>
+    window.dispatchEvent(new CustomEvent(`close-modal-${id}`));

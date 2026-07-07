@@ -50,14 +50,14 @@ class PengajuanAnggaran extends Model
     public function statusBadge(): array
     {
         return match ($this->status) {
-            'draft' => ['bg-gray-700 text-gray-300', 'Draft'],
-            'menunggu_verifikasi' => ['bg-yellow-900/40 text-yellow-400', 'Verifikasi KASIUM'],
-            'terverifikasi' => ['bg-blue-900/40 text-blue-400', 'Terverifikasi'],
-            'disetujui_pimpinan' => ['bg-sipbo-gold/20 text-sipbo-gold', 'Diajukan ke Kapolsek'],
-            'diajukan_ke_polrestabes' => ['bg-indigo-900/40 text-indigo-400', 'Diajukan Polrestabes'],
-            'dana_cair' => ['bg-green-900/40 text-green-400', 'Dana Cair'],
-            'ditolak' => ['bg-red-900/40 text-red-400', 'Ditolak'],
-            default => ['bg-gray-700 text-gray-300', $this->status],
+            'draft'                   => ['badge-draft',    'Draft'],
+            'menunggu_verifikasi'     => ['badge-menunggu', 'Verifikasi KASIUM'],
+            'terverifikasi'           => ['badge-verif',    'Terverifikasi'],
+            'disetujui_pimpinan'      => ['badge-setuju',   'Diajukan ke Kapolsek'],
+            'diajukan_ke_polrestabes' => ['badge-verif',    'Diajukan Polrestabes'],
+            'dana_cair'               => ['badge-cair',     'Dana Cair'],
+            'ditolak'                 => ['badge-tolak',    'Ditolak'],
+            default                   => ['badge-draft',    $this->status],
         };
     }
 }

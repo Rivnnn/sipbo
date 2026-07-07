@@ -49,7 +49,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div>
                 <h3 class="font-semibold text-sipbo-gold text-sm lg:text-base">
-                    Laporan Realisasi Anggaran — Semua Program
+                    Laporan Realisasi Anggaran Semua Program
                 </h3>
                 <p class="text-xs text-sipbo-text-muted dark:text-light-text-muted mt-1">
                     Rekapitulasi realisasi seluruh program dalam satu periode.
