@@ -58,13 +58,19 @@
                             </x-btn-secondary>
 
                             @if($u->id !== auth()->id())
-                            <form action="{{ route('kasium.settings.users.destroy', $u->id) }}" method="POST">
+                            <form id="form-delete-user-{{ $u->id }}"
+                                action="{{ route('kasium.settings.users.destroy', $u->id) }}" method="POST" class="hidden">
                                 @csrf @method('DELETE')
-                                <x-btn-danger type="submit" size="sm"
-                                    onclick="return confirm('Hapus user {{ addslashes($u->name) }}?')">
-                                    <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
-                                </x-btn-danger>
                             </form>
+                            <x-btn-danger type="button" size="sm"
+                                onclick="confirmAction({
+                                    message: 'Hapus user {{ addslashes($u->name) }}? Tindakan ini tidak bisa dibatalkan.',
+                                    formId: 'form-delete-user-{{ $u->id }}',
+                                    danger: true,
+                                    confirmLabel: 'Ya, Hapus'
+                                })">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
+                            </x-btn-danger>
                             @endif
                         </div>
                     </td>
@@ -139,10 +145,9 @@
             <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Username</label>
             <input type="text" name="username" id="edit-user-username" required maxlength="30" class="sipbo-input">
         </div>
-        <div>
-            <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Password Baru</label>
-            <input type="password" name="password" minlength="6"
-                class="sipbo-input" placeholder="Kosongkan jika tidak ingin mengubah">
+        <div class="bg-sipbo-bg dark:bg-light-panel-light border border-sipbo-border dark:border-light-border
+                    rounded-xl p-3 text-xs text-sipbo-text-muted dark:text-light-text-muted">
+            🔒 Password tidak bisa diubah dari sini. Hanya pemilik akun yang bisa mengganti passwordnya sendiri lewat menu profil.
         </div>
         <div>
             <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Unit Kerja</label>

@@ -24,17 +24,17 @@
                 </p>
             </div>
         </div>
-        <form action="{{ route('kasium.settings.permissions.user.reset', $user->id) }}" method="POST"
-            onsubmit="return confirm('Reset semua override permission user ini ke default role?')">
+        <form id="form-reset-permission" action="{{ route('kasium.settings.permissions.user.reset', $user->id) }}" method="POST" class="hidden">
             @csrf
-            <button type="submit"
-                class="border border-red-500/50 dark:border-red-400/50
+        </form>
+        <button type="button"
+            onclick="confirmAction({message: 'Reset semua override permission user ini ke default role?', formId: 'form-reset-permission', danger: true, confirmLabel: 'Ya, Reset'})"
+            class="border border-red-500/50 dark:border-red-400/50
                        text-red-400 dark:text-red-600
                        px-4 py-2 rounded-xl text-sm font-medium
                        hover:bg-red-900/20 dark:hover:bg-red-50 transition">
                 Reset ke Default Role
             </button>
-        </form>
     </div>
 
     <!-- LEGEND -->

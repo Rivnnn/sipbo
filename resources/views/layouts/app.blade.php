@@ -115,9 +115,11 @@
                     </button>
 
                     <!-- User info -->
-                    <div class="flex items-center gap-2.5 bg-sipbo-gold/10 dark:bg-amber-50
+                    <a href="{{ route('profile.password.edit') }}"
+                        title="Ubah password akun saya"
+                        class="flex items-center gap-2.5 bg-sipbo-gold/10 dark:bg-amber-50
                                 border border-sipbo-gold/30 dark:border-amber-200
-                                rounded-xl px-3 py-1.5">
+                                rounded-xl px-3 py-1.5 hover:border-sipbo-gold transition">
                         <div class="w-8 h-8 rounded-full bg-sipbo-gold flex items-center justify-center
                                     font-bold text-sipbo-bg text-sm flex-shrink-0">
                             {{ substr(auth()->user()->name, 0, 1) }}
@@ -130,7 +132,7 @@
                                 ({{ auth()->user()->role_label }})
                             </p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </header>
 
@@ -165,6 +167,19 @@
             </footer>
         </div>
     </div>
+
+    {{-- Modal konfirmasi global — pengganti browser confirm() di semua tombol --}}
+    <x-modal id="confirm-global" title="Konfirmasi" size="sm">
+        <p id="confirm-modal-message" class="text-sm text-sipbo-text dark:text-light-text mb-5"></p>
+        <div class="flex justify-end gap-3">
+            <x-btn-secondary type="button" onclick="closeModal('confirm-global')">Batal</x-btn-secondary>
+            <button id="confirm-modal-confirm-btn" type="button" onclick="window.__submitConfirmedAction()"
+                class="px-4 py-2 rounded-xl text-sm font-semibold transition
+                       bg-sipbo-gold hover:bg-sipbo-gold-light text-sipbo-bg">
+                Ya, Lanjutkan
+            </button>
+        </div>
+    </x-modal>
 
     @stack('scripts')
 </body>

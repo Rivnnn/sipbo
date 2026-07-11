@@ -34,14 +34,9 @@
                        focus:ring-2 focus:ring-sipbo-gold">
         </div>
 
-        <div>
-            <label class="block text-sm text-sipbo-text dark:text-light-text mb-1.5">Password Baru</label>
-            <input type="password" name="password" minlength="6"
-                placeholder="Kosongkan jika tidak ingin mengubah"
-                class="w-full bg-sipbo-bg dark:bg-light-panel-light
-                       border border-sipbo-border dark:border-light-border
-                       rounded-xl p-2.5 text-sm text-sipbo-text dark:text-light-text
-                       placeholder-sipbo-text-muted focus:ring-2 focus:ring-sipbo-gold">
+        <div class="bg-sipbo-bg dark:bg-light-panel-light border border-sipbo-border dark:border-light-border
+                    rounded-xl p-3 text-xs text-sipbo-text-muted dark:text-light-text-muted">
+            🔒 Password tidak bisa diubah dari sini. Hanya pemilik akun yang bisa mengganti passwordnya sendiri, lewat menu profil setelah login.
         </div>
 
         <div>

@@ -15,24 +15,24 @@ class BkuController extends Controller
 
     public function index(Request $request)
     {
-        $programs = ProgramAnggaran::where('tahun_anggaran', now()->year)->get();
+        $programs = ProgramAnggaran::with('bukuKasUmums')->where('tahun_anggaran', now()->year)->get();
         $programId = $request->input('program_id', $programs->first()?->id);
         $transaksi = BukuKasUmum::with(['inputBy', 'pengajuanAnggaran'])
             ->where('program_anggaran_id', $programId)
             ->orderBy('tanggal_transaksi')->orderBy('id')
             ->paginate(15);
-        $program = ProgramAnggaran::find($programId);
+        $program = $programs->firstWhere('id', $programId);
 
         return view('kasium.bku.index', compact('programs', 'programId', 'transaksi', 'program'));
     }
 
     public function create(Request $request)
     {
-        $programs = ProgramAnggaran::where('tahun_anggaran', now()->year)->get();
+        $programs = ProgramAnggaran::with('bukuKasUmums')->where('tahun_anggaran', now()->year)->get();
 
         $pengajuan = null;
         if ($request->has('pengajuan_id')) {
-            $pengajuan = PengajuanAnggaran::with('programAnggaran')->find($request->pengajuan_id);
+            $pengajuan = PengajuanAnggaran::with('programAnggaran.bukuKasUmums')->find($request->pengajuan_id);
         }
 
         return view('kasium.bku.create', compact('programs', 'pengajuan'));

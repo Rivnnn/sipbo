@@ -128,57 +128,90 @@ button:focus-visible {
     outline-offset: 2px;
 }
 
-/* ─── Status badges ──────────────────────────────── */
-.badge-menunggu {
-    @apply bg-amber-900/30 text-amber-400 border border-amber-700/40;
-}
-.badge-verif {
-    @apply bg-blue-900/30 text-blue-400 border border-blue-700/40;
-}
-.badge-setuju {
-    @apply bg-emerald-900/30 text-emerald-400 border border-emerald-700/40;
-}
-.badge-cair {
-    @apply bg-green-900/30 text-green-400 border border-green-700/40;
-}
-.badge-tolak {
-    @apply bg-red-900/30 text-red-400 border border-red-700/40;
-}
-.badge-draft {
-    @apply bg-sipbo-panel-light text-sipbo-text-muted border border-sipbo-border;
-}
+@layer components {
+    /* ─── Status badges ──────────────────────────────── */
+    .badge-menunggu {
+        @apply bg-amber-900/30 text-amber-400 border border-amber-700/40;
+    }
+    .badge-verif {
+        @apply bg-blue-900/30 text-blue-400 border border-blue-700/40;
+    }
+    .badge-setuju {
+        @apply bg-emerald-900/30 text-emerald-400 border border-emerald-700/40;
+    }
+    .badge-cair {
+        @apply bg-green-900/30 text-green-400 border border-green-700/40;
+    }
+    .badge-tolak {
+        @apply bg-red-900/30 text-red-400 border border-red-700/40;
+    }
+    .badge-draft {
+        @apply bg-sipbo-panel-light text-sipbo-text-muted border border-sipbo-border;
+    }
 
-.dark .badge-menunggu {
-    @apply bg-amber-50 text-amber-700 border-amber-200;
-}
-.dark .badge-verif {
-    @apply bg-blue-50 text-blue-700 border-blue-200;
-}
-.dark .badge-setuju {
-    @apply bg-emerald-50 text-emerald-700 border-emerald-200;
-}
-.dark .badge-cair {
-    @apply bg-green-50 text-green-700 border-green-200;
-}
-.dark .badge-tolak {
-    @apply bg-red-50 text-red-700 border-red-200;
-}
-.dark .badge-draft {
-    @apply bg-gray-100 text-gray-600 border-gray-200;
-}
+    .dark .badge-menunggu {
+        @apply bg-amber-50 text-amber-700 border-amber-200;
+    }
+    .dark .badge-verif {
+        @apply bg-blue-50 text-blue-700 border-blue-200;
+    }
+    .dark .badge-setuju {
+        @apply bg-emerald-50 text-emerald-700 border-emerald-200;
+    }
+    .dark .badge-cair {
+        @apply bg-green-50 text-green-700 border-green-200;
+    }
+    .dark .badge-tolak {
+        @apply bg-red-50 text-red-700 border-red-200;
+    }
+    .dark .badge-draft {
+        @apply bg-gray-100 text-gray-600 border-gray-200;
+    }
 
-/* ─── Flash messages ─────────────────────────────── */
-.flash-success {
-    @apply bg-green-900/30 border border-green-700/40 text-green-400;
-}
-.flash-error {
-    @apply bg-red-900/30 border border-red-700/40 text-red-400;
-}
-.dark .flash-success {
-    @apply bg-green-50 border-green-200 text-green-700;
-}
-.dark .flash-error {
-    @apply bg-red-50 border-red-200 text-red-700;
+    /* ─── Flash messages ─────────────────────────────── */
+    .flash-success {
+        @apply bg-green-900/30 border border-green-700/40 text-green-400;
+    }
+    .flash-error {
+        @apply bg-red-900/30 border border-red-700/40 text-red-400;
+    }
+    .dark .flash-success {
+        @apply bg-green-50 border-green-200 text-green-700;
+    }
+    .dark .flash-error {
+        @apply bg-red-50 border-red-200 text-red-700;
+    }
+
+    /* ─── Sidebar active item ────────────────────────── */
+    .nav-active {
+        @apply bg-sipbo-gold text-sipbo-bg font-semibold;
+    }
+    .dark .nav-active {
+        @apply bg-sipbo-gold text-sipbo-bg font-semibold;
+    }
+
+    /* ─── Table row hover ────────────────────────────── */
+    .table-row-hover {
+        @apply hover:bg-sipbo-panel-light dark:hover:bg-light-panel-light;
+    }
+
+    /* ─── Card / Panel ───────────────────────────────── */
+    .sipbo-card {
+        @apply bg-sipbo-panel border border-sipbo-border rounded-2xl
+               dark:bg-light-panel dark:border-light-border;
+    }
+
+    /* ─── Input field ────────────────────────────────── */
+    .sipbo-input {
+        @apply w-full
+               bg-sipbo-bg dark:bg-light-panel-light
+               border border-sipbo-border dark:border-light-border
+               rounded-lg p-2.5 text-sm
+               text-sipbo-text dark:text-light-text
+               placeholder:text-sipbo-text-muted dark:placeholder:text-light-text-subtle
+               focus:ring-2 focus:ring-sipbo-gold focus:border-sipbo-gold
+               transition;
+    }
 }
 
 /* ─── Pagination ─────────────────────────────────── */
@@ -200,35 +233,4 @@ nav[role="navigation"] span:not([aria-current]) {
 .dark nav[role="navigation"] span[aria-current="page"] > span,
 .dark nav[role="navigation"] span[aria-current="page"] {
     @apply bg-sipbo-gold text-sipbo-bg border-sipbo-gold;
-}
-
-/* ─── Sidebar active item ────────────────────────── */
-.nav-active {
-    @apply bg-sipbo-gold text-sipbo-bg font-semibold;
-}
-.dark .nav-active {
-    @apply bg-sipbo-gold text-sipbo-bg font-semibold;
-}
-
-/* ─── Table row hover ────────────────────────────── */
-.table-row-hover {
-    @apply hover:bg-sipbo-panel-light dark:hover:bg-light-panel-light;
-}
-
-/* ─── Card / Panel ───────────────────────────────── */
-.sipbo-card {
-    @apply bg-sipbo-panel border border-sipbo-border rounded-2xl
-           dark:bg-light-panel dark:border-light-border;
-}
-
-/* ─── Input field ────────────────────────────────── */
-.sipbo-input {
-    @apply w-full
-           bg-sipbo-bg dark:bg-light-panel-light
-           border border-sipbo-border dark:border-light-border
-           rounded-lg p-2.5 text-sm
-           text-sipbo-text dark:text-light-text
-           placeholder:text-sipbo-text-muted dark:placeholder:text-light-text-subtle
-           focus:ring-2 focus:ring-sipbo-gold focus:border-sipbo-gold
-           transition;
 }

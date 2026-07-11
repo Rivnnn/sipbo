@@ -72,27 +72,32 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'username' => ['required', 'string', 'max:30', Rule::unique('users', 'username')->ignore($user->id)],
-            'password' => 'nullable|string|min:6',
             'unit_kerja_id' => 'nullable|exists:unit_kerjas,id',
             'role' => 'required|in:staf_unit,kasium,pimpinan',
         ], [
             'name.required' => 'Nama wajib diisi.',
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
-            'password.min' => 'Password minimal 6 karakter.',
             'role.required' => 'Role wajib dipilih.',
         ]);
 
+        // Password TIDAK bisa diubah dari sini oleh admin/kasium — hanya
+        // pemilik akun sendiri yang bisa mengubah passwordnya, lewat menu
+        // profil (route: profile.password). Ini untuk mencegah kasium
+        // (yang juga bertindak sebagai verifikator & pencair dana) bisa
+        // mengambil alih akun pimpinan (approver) dengan mereset passwordnya.
         $user->name = $validated['name'];
         $user->username = $validated['username'];
         $user->unit_kerja_id = $validated['unit_kerja_id'];
-
-        if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-
         $user->save();
-        $user->syncRoles([$validated['role']]);
+
+        // Role akun sendiri tidak boleh diubah lewat sini — mencegah kasium
+        // (sengaja/tidak sengaja) mengganti role dirinya lalu langsung
+        // terkunci dari halaman settings.users ini sendiri. Guard ini juga
+        // berlaku kalau seseorang mencoba melewati disabled di frontend.
+        if ($user->id !== auth()->id()) {
+            $user->syncRoles([$validated['role']]);
+        }
 
         return redirect()->route('kasium.settings.users.index')
             ->with('success', 'User berhasil diperbarui.');

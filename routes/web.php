@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\StafUnit\PengajuanController as StafPengajuanController;
 use App\Http\Controllers\Kasium\{VerifikasiController, EksternalController, BkuController};
 use App\Http\Controllers\Pimpinan\ApprovalController;
-use App\Http\Controllers\Shared\{DashboardController, PengajuanDetailController, LaporanController, ArsipController};
+use App\Http\Controllers\Shared\{DashboardController, PengajuanDetailController, LaporanController, ArsipController, ProfileController};
 use App\Http\Controllers\Settings\{UserController, UnitKerjaController, PermissionController};
 
 /*
@@ -14,7 +14,11 @@ use App\Http\Controllers\Settings\{UserController, UnitKerjaController, Permissi
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('guest')->group(function () {
+// Throttle di sini cuma backstop anti-bot (per IP, longgar). Proteksi
+// brute-force yang sesungguhnya ada di LoginController::login() lewat
+// ThrottlesLogins, yang menghitung per akun (username+IP) — supaya satu
+// akun yang di-brute-force tidak ikut mengunci staf lain di IP yang sama.
+Route::middleware('guest', 'throttle:30,1')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
 });
@@ -37,6 +41,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('dashboard.index')
         ->middleware('permission:dashboard.lihat');
 
+    // Ganti password akun sendiri — sengaja TIDAK digated oleh permission
+    // apa pun selain 'auth', supaya semua role (termasuk pimpinan) selalu
+    // bisa mengubah password akunnya sendiri tanpa bergantung pada admin.
+    Route::get('profile/password', [ProfileController::class, 'editPassword'])->name('profile.password.edit');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+
     Route::get('pengajuan/{id}', [PengajuanDetailController::class, 'show'])
         ->name('pengajuan.show');
 
@@ -54,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('excel/{program}', [LaporanController::class, 'exportExcel'])->name('excel');
             Route::get('realisasi/pdf', [LaporanController::class, 'exportRealisasiPdf'])->name('realisasi-pdf');
             Route::get('realisasi/excel', [LaporanController::class, 'exportRealisasiExcel'])->name('realisasi-excel');
+            Route::get('tahunan/pdf', [LaporanController::class, 'exportTahunanPdf'])->name('tahunan-pdf');
+            Route::get('tahunan/excel', [LaporanController::class, 'exportTahunanExcel'])->name('tahunan-excel');
         });
 
 

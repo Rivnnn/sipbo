@@ -24,27 +24,32 @@
             font-size: 10px;
         }
 
+        h4 {
+            color: #0A1F44;
+            margin-bottom: 2px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         th,
         td {
             border: 1px solid #ccc;
-            padding: 6px 8px;
+            padding: 5px 6px;
         }
 
         th {
             background-color: #0A1F44;
             color: #fff;
             text-align: left;
-            font-size: 10px;
+            font-size: 9px;
         }
 
         td {
-            font-size: 10px;
+            font-size: 9px;
         }
 
         .text-right {
@@ -77,59 +82,50 @@
             border-top: 1px solid #000;
             padding-top: 4px;
         }
-
-        .progress-bg {
-            background-color: #e5e7eb;
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-        }
-
-        .progress-fill {
-            background-color: #1E3A8A;
-            height: 8px;
-            border-radius: 4px;
-        }
     </style>
 </head>
 
 <body>
     <div class="header">
-        <h3>LAPORAN REALISASI ANGGARAN</h3>
+        <h3>LAPORAN REALISASI ANGGARAN TAHUNAN</h3>
         <p>Polsek Bojongloa Kidul</p>
-        <p>Periode: {{ $namaBulan }}</p>
+        <p>Tahun Anggaran: {{ $tahun }}</p>
     </div>
 
+    <h4>1. Ringkasan Tahunan per Program</h4>
     <table>
         <thead>
             <tr>
                 <th>Kode</th>
                 <th>Nama Program</th>
                 <th class="text-right">Pagu DIPA (Rp)</th>
-                <th class="text-right">Realisasi Bulan Ini (Rp)</th>
-                <th class="text-right">Sisa Anggaran (Rp)</th>
+                <th class="text-right">Total Dana Cair (Rp)</th>
+                <th class="text-right">Total Distribusi (Rp)</th>
+                <th class="text-right">Sisa Pagu (Rp)</th>
                 <th class="text-center">% Terserap</th>
             </tr>
         </thead>
         <tbody>
-            @php $totalPagu = 0; $totalRealisasi = 0; $totalSisa = 0; @endphp
+            @php $totalPagu = 0; $totalCair = 0; $totalDistribusi = 0; $totalSisa = 0; @endphp
             @forelse($programs as $p)
             @php
             $totalPagu += $p['pagu_dipa'];
-            $totalRealisasi += $p['realisasi_bulan_ini'];
-            $totalSisa += $p['sisa_anggaran'];
+            $totalCair += $p['total_dana_cair'];
+            $totalDistribusi += $p['total_distribusi'];
+            $totalSisa += $p['sisa_pagu'];
             @endphp
             <tr>
                 <td>{{ $p['kode_program'] }}</td>
                 <td>{{ $p['nama_program'] }}</td>
                 <td class="text-right">{{ number_format($p['pagu_dipa'], 2) }}</td>
-                <td class="text-right">{{ number_format($p['realisasi_bulan_ini'], 2) }}</td>
-                <td class="text-right">{{ number_format($p['sisa_anggaran'], 2) }}</td>
+                <td class="text-right">{{ number_format($p['total_dana_cair'], 2) }}</td>
+                <td class="text-right">{{ number_format($p['total_distribusi'], 2) }}</td>
+                <td class="text-right">{{ number_format($p['sisa_pagu'], 2) }}</td>
                 <td class="text-center">{{ $p['persentase'] }}%</td>
             </tr>
             @empty
             <tr>
-                <td colspan="6" class="text-center">Tidak ada data program anggaran.</td>
+                <td colspan="7" class="text-center">Tidak ada program anggaran tahun {{ $tahun }}.</td>
             </tr>
             @endforelse
         </tbody>
@@ -137,10 +133,11 @@
             <tr>
                 <td colspan="2">TOTAL</td>
                 <td class="text-right">{{ number_format($totalPagu, 2) }}</td>
-                <td class="text-right">{{ number_format($totalRealisasi, 2) }}</td>
+                <td class="text-right">{{ number_format($totalCair, 2) }}</td>
+                <td class="text-right">{{ number_format($totalDistribusi, 2) }}</td>
                 <td class="text-right">{{ number_format($totalSisa, 2) }}</td>
                 <td class="text-center">
-                    {{ $totalPagu > 0 ? round((($totalPagu - $totalSisa) / $totalPagu) * 100, 2) : 0 }}%
+                    {{ $totalPagu > 0 ? round($totalDistribusi / $totalPagu * 100, 2) : 0 }}%
                 </td>
             </tr>
         </tfoot>
@@ -148,9 +145,37 @@
 
     <div style="page-break-before: always;"></div>
 
-    <h3 style="margin-top: 0;">RINCIAN TRANSAKSI</h3>
-    <p style="font-size: 10px; margin-top: -6px;">Periode: {{ $namaBulan }} — seluruh program, urut per program &amp; tanggal</p>
+    <h4>2. Rekap Distribusi per Bulan (Rp)</h4>
+    <p style="font-size: 9px; margin-top: -6px;">Nominal kredit (distribusi ke unit) tiap bulan, per program.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Program</th>
+                @foreach(range(1,12) as $b)
+                <th class="text-right">{{ \Carbon\Carbon::createFromDate(2000, $b, 1)->translatedFormat('M') }}</th>
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($programs as $p)
+            <tr>
+                <td>{{ $p['kode_program'] }}</td>
+                @foreach(range(1,12) as $b)
+                <td class="text-right">{{ number_format($p['bulanan'][$b]['kredit'], 0, ',', '.') }}</td>
+                @endforeach
+            </tr>
+            @empty
+            <tr>
+                <td colspan="13" class="text-center">Tidak ada data.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
 
+    <div style="page-break-before: always;"></div>
+
+    <h4>3. Rincian Transaksi Setahun</h4>
+    <p style="font-size: 9px; margin-top: -6px;">Seluruh transaksi BKU tahun {{ $tahun }}, urut per program &amp; tanggal.</p>
     <table>
         <thead>
             <tr>
@@ -180,7 +205,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="9" class="text-center">Tidak ada transaksi pada periode ini.</td>
+                <td colspan="9" class="text-center">Tidak ada transaksi pada tahun {{ $tahun }}.</td>
             </tr>
             @endforelse
         </tbody>

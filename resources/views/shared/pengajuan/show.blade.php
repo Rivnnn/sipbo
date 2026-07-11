@@ -107,17 +107,17 @@
                     Verifikasi
                 </button>
             </form>
-            <form action="{{ route('kasium.verifikasi.tolak', $pengajuan->id) }}" method="POST"
-                onsubmit="return confirm('Tolak pengajuan ini?')">
+            <form id="form-tolak-verifikasi" action="{{ route('kasium.verifikasi.tolak', $pengajuan->id) }}" method="POST" class="hidden">
                 @csrf
                 <input type="hidden" name="catatan" value="Tidak lengkap administratif">
-                <button class="border border-red-500/50 dark:border-red-400/50
+            </form>
+            <button type="button"
+                onclick="confirmAction({message: 'Tolak pengajuan ini?', formId: 'form-tolak-verifikasi', danger: true, confirmLabel: 'Ya, Tolak'})" class="border border-red-500/50 dark:border-red-400/50
                                text-red-400 dark:text-red-600
                                px-4 py-2 rounded-xl text-sm font-medium
                                hover:bg-red-900/20 dark:hover:bg-red-50 transition">
                     Tolak
                 </button>
-            </form>
         </div>
         @endif
 
@@ -180,17 +180,18 @@
                     ✓ Setujui (ACC)
                 </button>
             </form>
-            <form action="{{ route('pimpinan.approval.tolak', $pengajuan->id) }}" method="POST"
-                onsubmit="return confirm('Tolak pengajuan ini?')">
+            <form id="form-tolak-approval" action="{{ route('pimpinan.approval.tolak', $pengajuan->id) }}" method="POST" class="hidden">
                 @csrf
                 <input type="hidden" name="catatan" value="Ditolak oleh Pimpinan">
-                <button class="border border-red-500/50 dark:border-red-400/50
+            </form>
+            <button type="button"
+                onclick="confirmAction({message: 'Tolak pengajuan ini?', formId: 'form-tolak-approval', danger: true, confirmLabel: 'Ya, Tolak'})"
+                class="border border-red-500/50 dark:border-red-400/50
                                text-red-400 dark:text-red-600
                                px-4 py-2 rounded-xl text-sm font-medium
                                hover:bg-red-900/20 dark:hover:bg-red-50 transition">
                     Tolak
                 </button>
-            </form>
         </div>
         @endif
         @endcan

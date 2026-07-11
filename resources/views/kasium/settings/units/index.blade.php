@@ -43,13 +43,18 @@
                                 onclick="openEditUnit({{ $u->id }}, '{{ addslashes($u->nama_unit) }}', '{{ $u->kode_unit }}')">
                                 <i data-lucide="pencil" class="w-3 h-3"></i> Edit
                             </x-btn-secondary>
-                            <form action="{{ route('kasium.settings.units.destroy', $u->id) }}" method="POST">
+                            <form id="form-delete-unit-{{ $u->id }}" action="{{ route('kasium.settings.units.destroy', $u->id) }}" method="POST" class="hidden">
                                 @csrf @method('DELETE')
-                                <x-btn-danger type="submit" size="sm"
-                                    onclick="return confirm('Hapus unit {{ addslashes($u->nama_unit) }}?')">
-                                    <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
-                                </x-btn-danger>
                             </form>
+                            <x-btn-danger type="button" size="sm"
+                                onclick="confirmAction({
+                                    message: 'Hapus unit {{ addslashes($u->nama_unit) }}? Tindakan ini tidak bisa dibatalkan.',
+                                    formId: 'form-delete-unit-{{ $u->id }}',
+                                    danger: true,
+                                    confirmLabel: 'Ya, Hapus'
+                                })">
+                                <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
+                            </x-btn-danger>
                         </div>
                     </td>
                 </tr>

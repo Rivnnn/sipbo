@@ -123,69 +123,142 @@
     <form action="{{ route('kasium.bku.store') }}" method="POST" class="space-y-4">
         @csrf
 
-        <div>
-            <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Program Anggaran</label>
-            <select name="program_anggaran_id" required class="sipbo-input" id="bku-program-select">
-                <option value="">-- Pilih Program --</option>
-                @foreach($programs as $p)
-                <option value="{{ $p->id }}" data-saldo="{{ $p->saldo_berjalan }}">
-                    {{ $p->nama_program }}
-                </option>
-                @endforeach
-            </select>
-            <p class="text-xs text-sipbo-text-muted dark:text-light-text-muted mt-1">
-                Saldo berjalan: <span id="bku-saldo-info" class="text-sipbo-gold font-semibold">-</span>
+        {{-- Warning jika saldo 0 --}}
+        @if($program && $program->saldo_berjalan <= 0)
+            <div class="bg-red-900/30 dark:bg-red-50 border border-red-700/50 dark:border-red-200
+                    text-red-400 dark:text-red-700 text-sm rounded-lg p-3">
+            <p class="font-semibold">⚠ Saldo BKU masih Rp 0</p>
+            <p class="text-xs mt-1">
+                Dana belum cair untuk program ini. Pastikan pengajuan sudah
+                berstatus <strong>Dana Cair</strong> sebelum mencatat distribusi.
             </p>
-        </div>
-
-        <div>
-            <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Tanggal Transaksi</label>
-            <input type="date" name="tanggal_transaksi" value="{{ now()->format('Y-m-d') }}" required class="sipbo-input">
-        </div>
-
-        <div>
-            <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Uraian</label>
-            <input type="text" name="uraian" required class="sipbo-input"
-                placeholder="Contoh: Distribusi dana ke Unit Lalu Lintas">
-        </div>
-
-        <div>
-            <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Nominal Kredit (Kas Keluar)</label>
-            <div class="flex rounded-lg overflow-hidden border border-sipbo-border dark:border-light-border
-                        focus-within:ring-2 focus-within:ring-sipbo-gold focus-within:border-sipbo-gold">
-                <span class="px-3 flex items-center text-sm text-sipbo-text-muted dark:text-light-text-muted
-                             bg-sipbo-panel-light dark:bg-light-panel-light border-r
-                             border-sipbo-border dark:border-light-border flex-shrink-0">
-                    Rp
-                </span>
-                <input type="number" name="kredit" required min="1" step="1"
-                    class="flex-1 bg-sipbo-bg dark:bg-light-panel-light px-3 py-2.5 text-sm
-                           text-sipbo-text dark:text-light-text placeholder:text-sipbo-text-muted
-                           dark:placeholder:text-light-text-subtle outline-none border-none"
-                    placeholder="0">
             </div>
-        </div>
+            @endif
 
-        <div class="flex justify-end gap-3 pt-2">
-            <x-btn-secondary type="button" onclick="closeModal('bku-create')">Batal</x-btn-secondary>
-            <x-btn-primary type="submit">Simpan Transaksi</x-btn-primary>
-        </div>
+            <div>
+                <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">
+                    Program Anggaran
+                </label>
+                <select name="program_anggaran_id" required
+                    class="sipbo-input" id="bku-program-select">
+                    <option value="">-- Pilih Program --</option>
+                    @foreach($programs as $p)
+                    <option value="{{ $p->id }}"
+                        data-saldo="{{ $p->saldo_berjalan }}"
+                        data-pagu="{{ $p->pagu_dipa }}"
+                        {{ $programId == $p->id ? 'selected' : '' }}>
+                        {{ $p->nama_program }} ({{ $p->kode_program }})
+                    </option>
+                    @endforeach
+                </select>
+
+                {{-- Info saldo real-time --}}
+                <div class="mt-1.5 text-xs space-y-0.5" id="bku-saldo-info-wrap">
+                    <p class="text-sipbo-text-muted dark:text-light-text-muted">
+                        Saldo BKU berjalan:
+                        <span id="bku-saldo-val" class="font-semibold text-sipbo-gold">-</span>
+                    </p>
+                    <p id="bku-warning" class="text-red-400 dark:text-red-600 hidden">
+                        ⚠ Saldo 0 — tandai dana cair terlebih dahulu
+                    </p>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">
+                    Tanggal Transaksi
+                </label>
+                <input type="date" name="tanggal_transaksi"
+                    value="{{ now()->format('Y-m-d') }}"
+                    required class="sipbo-input">
+            </div>
+
+            <div>
+                <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">
+                    Uraian
+                </label>
+                <input type="text" name="uraian" required class="sipbo-input"
+                    placeholder="Contoh: Distribusi dana ke Unit Lalu Lintas">
+            </div>
+
+            <div>
+                <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">
+                    Nominal Kredit (Kas Keluar / Distribusi)
+                </label>
+                <div class="relative">
+                    <span class="absolute left-3 top-2.5 text-sipbo-text-muted
+                             dark:text-light-text-muted text-sm font-medium">Rp</span>
+                    <input type="number" step="1" name="kredit" required
+                        class="sipbo-input pl-10" placeholder="0"
+                        id="bku-kredit-input">
+                </div>
+                <p class="text-xs text-sipbo-text-muted dark:text-light-text-muted mt-1">
+                    Tidak boleh melebihi saldo BKU berjalan
+                </p>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <x-btn-secondary type="button" onclick="closeModal('bku-create')">
+                    Batal
+                </x-btn-secondary>
+                <x-btn-primary type="submit" id="bku-submit-btn">
+                    Simpan Transaksi
+                </x-btn-primary>
+            </div>
     </form>
 </x-modal>
 
 @push('scripts')
 <script>
-    const bkuProgramSelect = document.getElementById('bku-program-select');
-    const bkuSaldoInfo = document.getElementById('bku-saldo-info');
+    const sel = document.getElementById('bku-program-select');
+    const valEl = document.getElementById('bku-saldo-val');
+    const warnEl = document.getElementById('bku-warning');
+    const submitBtn = document.getElementById('bku-submit-btn');
+    const kreditInput = document.getElementById('bku-kredit-input');
 
-    if (bkuProgramSelect) {
-        bkuProgramSelect.addEventListener('change', function() {
-            const saldo = this.options[this.selectedIndex].dataset.saldo;
-            bkuSaldoInfo.textContent = saldo ?
-                'Rp ' + new Intl.NumberFormat('id-ID').format(saldo) :
-                '-';
-        });
+    function updateSaldoInfo() {
+        const opt = sel.options[sel.selectedIndex];
+        const saldo = parseFloat(opt.dataset.saldo ?? 0);
+
+        if (opt.value) {
+            valEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(saldo);
+
+            if (saldo <= 0) {
+                warnEl.classList.remove('hidden');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                warnEl.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        } else {
+            valEl.textContent = '-';
+        }
     }
+
+    // Validasi nominal tidak boleh > saldo
+    kreditInput?.addEventListener('input', function() {
+        const opt = sel.options[sel.selectedIndex];
+        const saldo = parseFloat(opt.dataset.saldo ?? 0);
+        const val = parseFloat(this.value ?? 0);
+
+        if (val > saldo && saldo > 0) {
+            this.setCustomValidity(
+                'Nominal melebihi saldo berjalan Rp ' +
+                new Intl.NumberFormat('id-ID').format(saldo)
+            );
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    sel?.addEventListener('change', updateSaldoInfo);
+
+    // Jalankan saat modal dibuka
+    window.addEventListener('open-modal-bku-create', () => {
+        updateSaldoInfo();
+    });
 </script>
 @endpush
 

@@ -56,12 +56,12 @@
         <div>
             <label class="block text-sm text-sipbo-text dark:text-light-text mb-1.5">Nominal Usulan</label>
             <div class="relative">
-                <span class="absolute left-3 top-2.5 text-sipbo-text-muted dark:text-light-text-muted text-sm">Rp</span>
+                <span class="absolute left-3 top-2.5 text-sipbo-text-muted dark:text-light-text-muted text-sm font-medium">Rp</span>
                 <input type="number" step="0.01" name="nominal_usulan"
                     value="{{ old('nominal_usulan') }}" required placeholder="0"
                     class="w-full bg-sipbo-bg dark:bg-light-panel-light
                            border border-sipbo-border dark:border-light-border
-                           rounded-xl p-2.5 pl-9 text-sm text-sipbo-text dark:text-light-text
+                           rounded-xl p-2.5 pl-10 text-sm text-sipbo-text dark:text-light-text
                            focus:ring-2 focus:ring-sipbo-gold">
             </div>
         </div>

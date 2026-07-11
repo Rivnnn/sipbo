@@ -13,15 +13,28 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $tahun = now()->year;
+        $bulanIni = now()->month;
 
-        $programs = ProgramAnggaran::where('tahun_anggaran', $tahun)->get()->map(function ($program) {
-            $realisasiBulanIni = BukuKasUmum::where('program_anggaran_id', $program->id)
-                ->whereMonth('tanggal_transaksi', now()->month)
-                ->whereYear('tanggal_transaksi', now()->year)
-                ->sum('kredit');
+        $programEntities = ProgramAnggaran::where('tahun_anggaran', $tahun)->get();
+        $programIds = $programEntities->pluck('id');
 
-            $totalRealisasi = BukuKasUmum::where('program_anggaran_id', $program->id)->sum('kredit');
-            $saldoBerjalan = $program->saldo_berjalan;
+        // SATU query untuk semua transaksi program tahun ini, bukan 2-3 query
+        // TERPISAH per program seperti sebelumnya (dulu: makin banyak program,
+        // makin banyak query — sekarang selalu 1 query berapa pun jumlah program).
+        $semuaTransaksi = BukuKasUmum::whereIn('program_anggaran_id', $programIds)
+            ->get(['id', 'program_anggaran_id', 'tanggal_transaksi', 'debit', 'kredit', 'saldo']);
+
+        $programs = $programEntities->map(function ($program) use ($semuaTransaksi, $bulanIni, $tahun) {
+            $rows = $semuaTransaksi->where('program_anggaran_id', $program->id);
+
+            $realisasiBulanIni = (float) $rows->filter(
+                fn($r) => (int) $r->tanggal_transaksi->format('n') === $bulanIni
+                    && (int) $r->tanggal_transaksi->format('Y') === $tahun
+            )->sum('kredit');
+
+            $totalRealisasi = (float) $rows->sum('kredit');
+            $last = $rows->sortBy('id')->sortBy('tanggal_transaksi')->last();
+            $saldoBerjalan = $last ? (float) $last->saldo : 0;
 
             return [
                 'id' => $program->id,
@@ -73,13 +86,16 @@ class DashboardController extends Controller
 
         $recent = $recentQuery->take(5)->get();
 
+        $monthlySums = BukuKasUmum::whereYear('tanggal_transaksi', $tahun)
+            ->selectRaw('MONTH(tanggal_transaksi) as bulan, SUM(kredit) as total')
+            ->groupBy('bulan')
+            ->pluck('total', 'bulan');
+
         $chartLabels = [];
         $chartData = [];
         for ($m = 1; $m <= 12; $m++) {
             $chartLabels[] = \Carbon\Carbon::createFromDate($tahun, $m, 1)->translatedFormat('M');
-            $chartData[] = (float) BukuKasUmum::whereYear('tanggal_transaksi', $tahun)
-                ->whereMonth('tanggal_transaksi', $m)
-                ->sum('kredit');
+            $chartData[] = (float) ($monthlySums[$m] ?? 0);
         }
 
         return view('shared.dashboard.index', compact('programs', 'stats', 'recent', 'chartLabels', 'chartData'));

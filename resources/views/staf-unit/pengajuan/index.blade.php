@@ -52,13 +52,13 @@
                                 <i data-lucide="pencil" class="w-3 h-3"></i> Edit
                             </x-btn-secondary>
 
-                            <form action="{{ route('staf.pengajuan.kirim', $p->id) }}" method="POST">
+                            <form id="form-kirim-{{ $p->id }}" action="{{ route('staf.pengajuan.kirim', $p->id) }}" method="POST" class="hidden">
                                 @csrf
-                                <x-btn-primary type="submit" size="sm"
-                                    onclick="return confirm('Kirim pengajuan ini untuk diverifikasi?')">
-                                    <i data-lucide="send" class="w-3 h-3"></i> Kirim
-                                </x-btn-primary>
                             </form>
+                            <x-btn-primary type="button" size="sm"
+                                onclick="confirmAction({message: 'Kirim pengajuan {{ addslashes($p->judul_usulan) }} untuk diverifikasi?', formId: 'form-kirim-{{ $p->id }}', confirmLabel: 'Ya, Kirim'})">
+                                <i data-lucide="send" class="w-3 h-3"></i> Kirim
+                            </x-btn-primary>
                             @endif
 
                             <x-btn-secondary size="sm" href="{{ route('pengajuan.show', $p->id) }}">
@@ -114,9 +114,9 @@
         <div>
             <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Nominal Usulan</label>
             <div class="relative">
-                <span class="absolute left-3 top-2.5 text-sipbo-text-muted dark:text-light-text-muted text-sm">Rp</span>
+                <span class="absolute left-3 top-2.5 text-sipbo-text-muted dark:text-light-text-muted text-sm font-medium">Rp</span>
                 <input type="number" step="0.01" name="nominal_usulan" value="{{ old('nominal_usulan') }}" required
-                    class="sipbo-input pl-9" placeholder="0">
+                    class="sipbo-input pl-10" placeholder="0">
             </div>
         </div>
 
@@ -164,9 +164,9 @@
         <div>
             <label class="block text-sm text-sipbo-text dark:text-light-text mb-1">Nominal Usulan</label>
             <div class="relative">
-                <span class="absolute left-3 top-2.5 text-sipbo-text-muted dark:text-light-text-muted text-sm">Rp</span>
+                <span class="absolute left-3 top-2.5 text-sipbo-text-muted dark:text-light-text-muted text-sm font-medium">Rp</span>
                 <input type="number" step="0.01" name="nominal_usulan" id="edit-pengajuan-nominal" required
-                    class="sipbo-input pl-9">
+                    class="sipbo-input pl-10">
             </div>
         </div>
 

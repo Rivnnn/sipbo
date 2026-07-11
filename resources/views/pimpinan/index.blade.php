@@ -51,8 +51,8 @@
                                 onclick="confirmAction({message: 'Setujui pengajuan {{ addslashes($p->judul_usulan) }}?', formId: 'form-setujui-{{ $p->id }}', confirmLabel: 'Ya, Setujui'})"
                                 class="bg-sipbo-gold hover:bg-sipbo-gold-light text-sipbo-bg
                                                px-3 py-1.5 rounded-lg text-xs font-semibold transition">
-                                    ✓ Setujui
-                                </button>
+                                ✓ Setujui
+                            </button>
                             <form id="form-tolak-{{ $p->id }}" action="{{ route('pimpinan.approval.tolak', $p->id) }}" method="POST" class="hidden">
                                 @csrf
                                 <input type="hidden" name="catatan" value="Ditolak oleh Pimpinan">
@@ -63,8 +63,8 @@
                                                text-red-400 dark:text-red-600
                                                px-3 py-1.5 rounded-lg text-xs font-medium
                                                hover:bg-red-900/20 dark:hover:bg-red-50 transition">
-                                    Tolak
-                                </button>
+                                Tolak
+                            </button>
                         </div>
                     </td>
                 </tr>

@@ -52,7 +52,7 @@
                     Laporan Realisasi Anggaran Semua Program
                 </h3>
                 <p class="text-xs text-sipbo-text-muted dark:text-light-text-muted mt-1">
-                    Rekapitulasi realisasi seluruh program dalam satu periode.
+                    Rekapitulasi + rincian transaksi seluruh program dalam satu bulan.
                 </p>
             </div>
             <div class="flex gap-2 flex-shrink-0">
@@ -73,6 +73,39 @@
             </div>
         </div>
     </div>
+
+    <!-- LAPORAN TAHUNAN -->
+    <div class="bg-sipbo-panel dark:bg-light-panel
+                border border-sipbo-border dark:border-light-border
+                dark:shadow-sm rounded-2xl p-4 lg:p-5">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+                <h3 class="font-semibold text-sipbo-gold text-sm lg:text-base">
+                    Laporan Realisasi Anggaran Tahunan
+                </h3>
+                <p class="text-xs text-sipbo-text-muted dark:text-light-text-muted mt-1">
+                    Akumulasi Januari&ndash;Desember {{ $tahun }}: ringkasan per program, rekap bulanan, dan rincian transaksi setahun.
+                </p>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+                <a href="{{ route('laporan.tahunan-pdf', ['tahun' => $tahun]) }}"
+                    class="bg-red-900/30 dark:bg-red-50 text-red-400 dark:text-red-700
+                           border border-red-700/40 dark:border-red-300
+                           px-3 py-2 rounded-xl text-xs font-medium
+                           hover:bg-red-900/50 dark:hover:bg-red-100 transition">
+                    📄 PDF
+                </a>
+                <a href="{{ route('laporan.tahunan-excel', ['tahun' => $tahun]) }}"
+                    class="bg-green-900/30 dark:bg-green-50 text-green-400 dark:text-green-700
+                           border border-green-700/40 dark:border-green-300
+                           px-3 py-2 rounded-xl text-xs font-medium
+                           hover:bg-green-900/50 dark:hover:bg-green-100 transition">
+                    📊 Excel
+                </a>
+            </div>
+        </div>
+    </div>
+
 
     <!-- BKU PER PROGRAM -->
     <div class="bg-sipbo-panel dark:bg-light-panel

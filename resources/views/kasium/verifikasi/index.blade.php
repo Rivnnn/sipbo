@@ -55,16 +55,17 @@
                                     Verifikasi
                                 </button>
                             </form>
-                            <form action="{{ route('kasium.verifikasi.tolak', $p->id) }}" method="POST"
-                                onsubmit="return confirm('Tolak pengajuan ini?')">
+                            <form id="form-tolak-verif-{{ $p->id }}" action="{{ route('kasium.verifikasi.tolak', $p->id) }}" method="POST" class="hidden">
                                 @csrf
                                 <input type="hidden" name="catatan" value="Tidak lengkap secara administratif">
-                                <button class="border border-red-500/50 text-red-400 dark:text-red-600
+                            </form>
+                            <button type="button"
+                                onclick="confirmAction({message: 'Tolak pengajuan {{ addslashes($p->judul_usulan) }}?', formId: 'form-tolak-verif-{{ $p->id }}', danger: true, confirmLabel: 'Ya, Tolak'})"
+                                class="border border-red-500/50 text-red-400 dark:text-red-600
                                                dark:border-red-400/50 px-3 py-1.5 rounded-lg text-xs
                                                font-medium hover:bg-red-900/20 dark:hover:bg-red-50 transition">
-                                    Tolak
-                                </button>
-                            </form>
+                                Tolak
+                            </button>
                         </div>
 
                         @elseif($p->status === 'disetujui_pimpinan')
@@ -87,17 +88,18 @@
                         </form>
 
                         @elseif($p->status === 'diajukan_ke_polrestabes')
-                        <form action="{{ route('kasium.eksternal.dana-cair', $p->id) }}" method="POST"
-                            onsubmit="return confirm('Tandai dana sudah cair?')">
+                        <form id="form-dana-cair-{{ $p->id }}" action="{{ route('kasium.eksternal.dana-cair', $p->id) }}" method="POST" class="hidden">
                             @csrf
-                            <button class="bg-green-900/40 dark:bg-green-100
+                        </form>
+                        <button type="button"
+                            onclick="confirmAction({message: 'Tandai dana untuk {{ addslashes($p->judul_usulan) }} sudah cair?', formId: 'form-dana-cair-{{ $p->id }}', confirmLabel: 'Ya, Sudah Cair'})"
+                            class="bg-green-900/40 dark:bg-green-100
                                            text-green-400 dark:text-green-700
                                            border border-green-700/50 dark:border-green-300
                                            px-3 py-1.5 rounded-lg text-xs font-medium
                                            hover:bg-green-900/60 dark:hover:bg-green-200 transition">
-                                Tandai Dana Cair
-                            </button>
-                        </form>
+                            Tandai Dana Cair
+                        </button>
 
                         @else
                         <span class="text-sipbo-text-muted dark:text-light-text-muted text-xs">
